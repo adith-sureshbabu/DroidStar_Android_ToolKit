@@ -464,5 +464,28 @@ namespace DroidAppStar
             }
         }
 
+        private void btnReboot_Click(object sender, EventArgs e)
+        {
+            if (adbDevice != string.Empty)
+            {
+                cm.execCommand(adbDevice + " reboot");
+            }
+        }
+
+        private void btnRebootRecovery_Click(object sender, EventArgs e)
+        {
+            if (adbDevice != string.Empty)
+            {
+                cm.execCommand(adbDevice + " reboot recovery");
+            }
+        }
+
+        private void btnRebootBootloader_Click(object sender, EventArgs e)
+        {
+            if (adbDevice != string.Empty)
+            {
+                cm.execCommand(adbDevice + " reboot bootloader");
+            }
+        }
     }
 }

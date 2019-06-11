@@ -34,6 +34,9 @@
             this.transparentTabControl1 = new DroidAppStar.TransparentTabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnReboot = new System.Windows.Forms.Button();
+            this.btnRebootBootloader = new System.Windows.Forms.Button();
+            this.btnRebootRecovery = new System.Windows.Forms.Button();
             this.btnInstallApk = new System.Windows.Forms.Button();
             this.txtSideloadZip = new System.Windows.Forms.TextBox();
             this.txtInstallApk = new System.Windows.Forms.TextBox();
@@ -124,6 +127,9 @@
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox4.Controls.Add(this.btnReboot);
+            this.groupBox4.Controls.Add(this.btnRebootBootloader);
+            this.groupBox4.Controls.Add(this.btnRebootRecovery);
             this.groupBox4.Controls.Add(this.btnInstallApk);
             this.groupBox4.Controls.Add(this.txtSideloadZip);
             this.groupBox4.Controls.Add(this.txtInstallApk);
@@ -136,10 +142,43 @@
             this.groupBox4.TabIndex = 15;
             this.groupBox4.TabStop = false;
             // 
+            // btnReboot
+            // 
+            this.btnReboot.ForeColor = System.Drawing.Color.Black;
+            this.btnReboot.Location = new System.Drawing.Point(6, 119);
+            this.btnReboot.Name = "btnReboot";
+            this.btnReboot.Size = new System.Drawing.Size(118, 23);
+            this.btnReboot.TabIndex = 18;
+            this.btnReboot.Text = "Reboot Device";
+            this.btnReboot.UseVisualStyleBackColor = true;
+            this.btnReboot.Click += new System.EventHandler(this.btnReboot_Click);
+            // 
+            // btnRebootBootloader
+            // 
+            this.btnRebootBootloader.ForeColor = System.Drawing.Color.Black;
+            this.btnRebootBootloader.Location = new System.Drawing.Point(296, 119);
+            this.btnRebootBootloader.Name = "btnRebootBootloader";
+            this.btnRebootBootloader.Size = new System.Drawing.Size(118, 23);
+            this.btnRebootBootloader.TabIndex = 17;
+            this.btnRebootBootloader.Text = "Reboot to Bootloader";
+            this.btnRebootBootloader.UseVisualStyleBackColor = true;
+            this.btnRebootBootloader.Click += new System.EventHandler(this.btnRebootBootloader_Click);
+            // 
+            // btnRebootRecovery
+            // 
+            this.btnRebootRecovery.ForeColor = System.Drawing.Color.Black;
+            this.btnRebootRecovery.Location = new System.Drawing.Point(146, 119);
+            this.btnRebootRecovery.Name = "btnRebootRecovery";
+            this.btnRebootRecovery.Size = new System.Drawing.Size(129, 23);
+            this.btnRebootRecovery.TabIndex = 16;
+            this.btnRebootRecovery.Text = "Reboot to Recovery";
+            this.btnRebootRecovery.UseVisualStyleBackColor = true;
+            this.btnRebootRecovery.Click += new System.EventHandler(this.btnRebootRecovery_Click);
+            // 
             // btnInstallApk
             // 
             this.btnInstallApk.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnInstallApk.Location = new System.Drawing.Point(326, 58);
+            this.btnInstallApk.Location = new System.Drawing.Point(326, 69);
             this.btnInstallApk.Name = "btnInstallApk";
             this.btnInstallApk.Size = new System.Drawing.Size(88, 23);
             this.btnInstallApk.TabIndex = 8;
@@ -157,7 +196,7 @@
             // 
             // txtInstallApk
             // 
-            this.txtInstallApk.Location = new System.Drawing.Point(85, 60);
+            this.txtInstallApk.Location = new System.Drawing.Point(85, 71);
             this.txtInstallApk.Name = "txtInstallApk";
             this.txtInstallApk.ReadOnly = true;
             this.txtInstallApk.Size = new System.Drawing.Size(235, 20);
@@ -177,7 +216,7 @@
             // btnBrowseApk
             // 
             this.btnBrowseApk.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnBrowseApk.Location = new System.Drawing.Point(6, 58);
+            this.btnBrowseApk.Location = new System.Drawing.Point(6, 69);
             this.btnBrowseApk.Name = "btnBrowseApk";
             this.btnBrowseApk.Size = new System.Drawing.Size(73, 23);
             this.btnBrowseApk.TabIndex = 6;
@@ -489,7 +528,7 @@
             this.rtxConsole.ReadOnly = true;
             this.rtxConsole.Size = new System.Drawing.Size(642, 133);
             this.rtxConsole.TabIndex = 1;
-            this.rtxConsole.Text = "";
+            this.rtxConsole.Text = ">>";
             this.rtxConsole.TextChanged += new System.EventHandler(this.rtxConsole_TextChanged);
             // 
             // Form1
@@ -503,7 +542,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "DroidStar";
+            this.Text = "DroidStar - Android ToolKit";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.gradientPanel1.ResumeLayout(false);
             this.transparentTabControl1.ResumeLayout(false);
@@ -562,6 +601,9 @@
         private TransparentTabControl transparentTabControl1;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.Button btnReboot;
+        private System.Windows.Forms.Button btnRebootBootloader;
+        private System.Windows.Forms.Button btnRebootRecovery;
     }
 }
 
