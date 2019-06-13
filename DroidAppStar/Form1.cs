@@ -109,8 +109,6 @@ namespace DroidAppStar
                     tabPage4.BackColor = Color.Transparent;
                     tabPage5.BackColor = Color.Transparent;
                     transparentTabControl1.MakeTransparent();
-                    listView1.View = View.Details;
-                    listView1.Columns.Add("APPS", -2);            
                     cm.execCommand("adb kill-server");
                     cm.execCommand(@"taskkill /F /FI ""IMAGENAME eq adb.exe""");
                     cm.execCommand("adb.exe start-server");
@@ -223,6 +221,7 @@ namespace DroidAppStar
                 foreach (Button btn in groupBox4buttons) { btn.Enabled = true; }
                 foreach (Button btn in groupBox5buttons) { btn.Enabled = true; }
                 btnUninstallApk.Enabled = false;
+                label5.Text = cm.execCommand(adbDevice + " shell getprop ro.build.version.release");
             }
             getConnectedDeviceModels();
             //getBatteryP();
@@ -370,8 +369,11 @@ namespace DroidAppStar
             lblSystemAppsCount.Text = "---";
             if (adbDevice != string.Empty)
             {
-                cm.execCommand(adbDevice + @" shell ""pm list packages -3"">""%temp%\adb-userapps.txt""");
-                cm.execCommand(adbDevice + @" shell ""pm list packages -s"">""%temp%\adb-systemapps.txt""");
+                cm.execCommand(adbDevice + @" shell ""pm list packages -3 -f"">""%temp%\adb-userapps.txt""");
+                cm.execCommand(adbDevice + @" shell ""pm list packages -s -f"">""%temp%\adb-systemapps.txt""");
+
+                //cm.execCommand(adbDevice + @" shell ""pm list packages -3"">""%temp%\adb-userapps.txt""");
+                //cm.execCommand(adbDevice + @" shell ""pm list packages -s"">""%temp%\adb-systemapps.txt""");
                 string[] adbUserApps = File.ReadLines(temp + @"\adb-userapps.txt").ToArray();
                 string[] adbSystemApps = File.ReadLines(temp + @"\adb-systemapps.txt").ToArray();
                 int countUserApps = adbUserApps.Count();
@@ -379,18 +381,51 @@ namespace DroidAppStar
 
                 for (int i = 0; i < countUserApps; i++)
                 {
-                    adbUserApps[i] = adbUserApps[i].Replace("package:", "");
-                    listView1.Items.Add(adbUserApps[i]);
+                    int indexApk = adbUserApps[i].IndexOf(".apk=");
+                    string apkPath = adbUserApps[i].Substring(0, indexApk).Replace("package:","")+".apk";
+
+                    string padkage_data = cm.execCommand(adbDevice + @" shell /data/local/tmp/aapt-arm-pie d badging " + @"""" + apkPath + @"""" + @" | findstr ""application-label: versionName='""");
+                    int pkg_name_From = padkage_data.IndexOf("name='") + "name='".Length;
+                    int pkg_name_To = padkage_data.LastIndexOf("' versionCode");
+                    int pkg_version_From = padkage_data.IndexOf("versionName='") + "versionName='".Length;
+                    int pkg_version_To = padkage_data.LastIndexOf("' plat");
+                    int pkg_label_From = padkage_data.IndexOf("application-label:'") + "application-label:'".Length;
+                    int pkg_label_To = padkage_data.LastIndexOf("'");
+                    string pkg_name = padkage_data.Substring(pkg_name_From, pkg_name_To - pkg_name_From);
+                    string pkg_version = padkage_data.Substring(pkg_version_From, pkg_version_To - pkg_version_From);
+                    string pkg_label = padkage_data.Substring(pkg_label_From, pkg_label_To - pkg_label_From);
+
+                    string[] row = { pkg_label, pkg_version };
+                    listView1.Items.Add(pkg_name).SubItems.AddRange(row);
+                    //adbUserApps[i] = adbUserApps[i].Replace("package:", "");
+                    //listView1.Items.Add(adbUserApps[i]);
                     listView1.Items[i].ForeColor = Color.Blue;
                 }
 
                 for (int i = 0; i < countSystemApps; i++)
                 {
-                    adbSystemApps[i] = adbSystemApps[i].Replace("package:", "");
-                    listView1.Items.Add(adbSystemApps[i]);
+                    int indexApk = adbSystemApps[i].IndexOf(".apk=");
+                    string apkPath = adbSystemApps[i].Substring(0, indexApk).Replace("package:", "") + ".apk";
+
+                    string padkage_data = cm.execCommand(adbDevice + @" shell /data/local/tmp/aapt-arm-pie d badging " + @"""" + apkPath + @"""" + @" | findstr ""application-label: versionName='""");
+                    int pkg_name_From = padkage_data.IndexOf("name='") + "name='".Length;
+                    int pkg_name_To = padkage_data.LastIndexOf("' versionCode");
+                    int pkg_version_From = padkage_data.IndexOf("versionName='") + "versionName='".Length;
+                    int pkg_version_To = padkage_data.LastIndexOf("' plat");
+                    int pkg_label_From = padkage_data.IndexOf("application-label:'") + "application-label:'".Length;
+                    int pkg_label_To = padkage_data.LastIndexOf("'");
+                    string pkg_name = padkage_data.Substring(pkg_name_From, pkg_name_To - pkg_name_From);
+                    string pkg_version = padkage_data.Substring(pkg_version_From, pkg_version_To - pkg_version_From);
+                    string pkg_label = padkage_data.Substring(pkg_label_From, pkg_label_To - pkg_label_From);
+
+                    string[] row = { pkg_label, pkg_version };
+                    listView1.Items.Add(pkg_name).SubItems.AddRange(row);
+                    //adbSystemApps[i] = adbSystemApps[i].Replace("package:", "");
+                    //listView1.Items.Add(adbSystemApps[i]);
                     int i2 = countUserApps + i;
                     listView1.Items[i2].ForeColor = Color.Red;
                 }
+                //listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                 txtSearch.Enabled = true;
                 btnUninstallApk.Enabled = true;
                 lblUserAppsCount.ForeColor = Color.MediumSlateBlue;
@@ -409,10 +444,11 @@ namespace DroidAppStar
         }
         private void btnReadApps_Click(object sender, EventArgs e)
         {
-            using (frmWait f = new frmWait(readPackages))
-            {
-                f.ShowDialog(this);
-            }
+            readPackages();
+            //using (frmWait f = new frmWait(readPackages))
+            //{
+            //    f.ShowDialog(this);
+            //}
         }
 
         private void cmbDevices_SelectedIndexChanged(object sender, EventArgs e)
@@ -433,7 +469,7 @@ namespace DroidAppStar
             if (cmbDevices.SelectedItem.ToString() != "No device detected")
             { adbDevice = "adb.exe -s " + cmbDevices.SelectedItem.ToString(); }
             else { adbDevice = string.Empty; }
-            getBatteryP();
+            //getBatteryP();
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -486,6 +522,21 @@ namespace DroidAppStar
             {
                 cm.execCommand(adbDevice + " reboot bootloader");
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string padkage_data=cm.execCommand(adbDevice+@" shell /data/local/tmp/aapt-arm-pie d badging "+ @""""+ "/data/app/com.google.android.GoogleCameraTele-RtL8ZvClEGn1zRPlXaQ9xg==/base.apk"+@""""+ @" | findstr ""application-label: versionName='""");
+            int pkg_name_From = padkage_data.IndexOf("name='") + "name='".Length;
+            int pkg_name_To = padkage_data.LastIndexOf("' versionCode");
+            int pkg_version_From = padkage_data.IndexOf("versionName='") + "versionName='".Length;
+            int pkg_version_To = padkage_data.LastIndexOf("' plat");
+            int pkg_label_From = padkage_data.IndexOf("application-label:'") + "application-label:'".Length;
+            int pkg_label_To = padkage_data.LastIndexOf("'");
+            string pkg_name = padkage_data.Substring(pkg_name_From, pkg_name_To - pkg_name_From);
+            string pkg_version = padkage_data.Substring(pkg_version_From, pkg_version_To - pkg_version_From);
+            string pkg_label = padkage_data.Substring(pkg_label_From, pkg_label_To - pkg_label_From);
+            MessageBox.Show(pkg_name + pkg_version + pkg_label);
         }
     }
 }
